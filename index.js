@@ -74,6 +74,10 @@ capitalize = function (input) {
 };
 
 app.get("/", function (req, res) {
+  panNumber = "1234567";
+  fullName = "Sample";
+  category = " ";
+  message = "None";
   res.render("pan", {
     panNum: panNumber,
     personName: fullName,
