@@ -81,6 +81,10 @@ app.get("/", function (req, res) {
 });
 
 app.get("/pan", function (req, res) {
+  panNumber = "1234567";
+  fullName = "Sample";
+  category = " ";
+  message = "None";
   res.render("pan", {
     panNum: panNumber,
     personName: fullName,
@@ -111,7 +115,7 @@ app.post("/pan", function (req, res) {
       } catch (e) {
         res.redirect("/");
         console.log("not valid data");
-        alert("Please Enter Valid PAN");
+        alert.message("Please Enter Valid PAN");
       }
     });
 });
