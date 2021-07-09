@@ -156,8 +156,10 @@
         if (form.checkValidity() === false) {
           event.preventDefault();
           event.stopPropagation();
+		  $('#dataList').hide();
         }
         form.classList.add('was-validated');
+		$('#dataList').show();
       }, false);
     });
   }, false);
@@ -166,12 +168,12 @@
 
 
 <script>
-$(document).ready(function(){
-	$('#verify').on('click', function(){
-		$('#dataList').show();
-	});
-	// $('#dataList').hide(10000);
-})
+	$(document).ready(function(){
+		$('#verify').on('click', function(){
+			$('#dataList').show();		
+		});
+		setTimeout(() => {  $('#dataList').hide(); }, 2000);
+	})
 </script>
 
 </body>

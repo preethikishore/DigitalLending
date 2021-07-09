@@ -146,6 +146,7 @@
 (function() {
   'use strict';
   window.addEventListener('load', function() {
+	
     // Fetch all the forms we want to apply custom Bootstrap validation styles to
     var forms = document.getElementsByClassName('needs-validation');
     // Loop over them and prevent submission
@@ -154,8 +155,12 @@
         if (form.checkValidity() === false) {
           event.preventDefault();
           event.stopPropagation();
+		  $('#dataList').hide(); 
         }
         form.classList.add('was-validated');
+		$('#verify').on('click', function(){
+		$('#dataList').show();
+	});
       }, false);
     });
   }, false);
@@ -166,10 +171,12 @@
 <script>
 $(document).ready(function(){
 	$('#verify').on('click', function(){
-		$('#dataList').show();
+		$('#dataList').show();		
 	});
-//	$('#dataList').hide(10000);
+	setTimeout(() => {  $('#dataList').hide(); }, 2000);
 })
+</script>
+
 </script>
 
 </body>
