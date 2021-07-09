@@ -9,6 +9,11 @@ img{
 	max-width: 100%;
 }
 
+#dataList
+{
+	display: none;
+}
+
 .wrapper{
 	background-color: #f7f7f7;
 	background-image: url(../img/wrapper.svg);

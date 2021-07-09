@@ -156,10 +156,13 @@
         if (form.checkValidity() === false) {
           event.preventDefault();
           event.stopPropagation();
-		  $('#dataList').hide();
+		//   $('#dataList').hide(); 
         }
         form.classList.add('was-validated');
+		$('#verify').on('click', function(){
 		$('#dataList').show();
+	});
+		
       }, false);
     });
   }, false);
@@ -168,11 +171,15 @@
 
 
 <script>
+
 	$(document).ready(function(){
 		$('#verify').on('click', function(){
-			$('#dataList').show();		
-		});
-		setTimeout(() => {  $('#dataList').hide(); }, 2000);
+		$('#dataList').show();	
+		setTimeout(() => {  $('#dataList').show(); }, 5000);	
+	});
+	setTimeout(() => {  $('#dataList').hide(); }, 5000);
+		
+		// setTimeout(() => {  $('#dataList').hide(); }, 2000);
 	})
 </script>
 

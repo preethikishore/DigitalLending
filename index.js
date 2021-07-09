@@ -86,9 +86,9 @@ app.get("/", function (req, res) {
 });
 
 app.get("/pan", function (req, res) {
-  panNumber = "1234567";
-  fullName = "Sample";
-  category = " ";
+  panNumber = " ";
+  fullName = "";
+  category = "";
   message = "None";
   res.render("pan", {
     panNum: panNumber,
@@ -127,7 +127,7 @@ app.post("/pan", function (req, res) {
 
 app.get("/aadhar", function (req, res) {
   aadharMessage = "none";
-  aadharNum = 1234567;
+  aadharNum = " ";
   res.render("aadhar", {
     aadharNum: aadharNum,
     uidStatus: aadharMessage,
