@@ -25,6 +25,7 @@ var request = require("request");
 //aadhar variables
 let uidStatus = "none";
 let aadharNum = 1234567;
+let aadharMessage = "none";
 
 const urlpan = "https://sandbox.aadhaarkyc.io/api/v1/pan/pan";
 const urluid =
@@ -121,9 +122,11 @@ app.post("/pan", function (req, res) {
 });
 
 app.get("/aadhar", function (req, res) {
+  aadharMessage = "none";
+  aadharNum = 1234567;
   res.render("aadhar", {
     aadharNum: aadharNum,
-    uidStatus: uidStatus,
+    uidStatus: aadharMessage,
   });
 });
 
@@ -139,13 +142,21 @@ app.post("/aadhar", function (req, res) {
         console.log(d);
         aadharNum = d.data.aadhaar_number;
         uidStatus = d.message_code;
+        uidSuccess = d.success;
+
+        if (uidSuccess) {
+          aadharMessage = "Aadhar is Verfied Successfully";
+        } else {
+          aadharMessage = "Aadhar Verfication Failed";
+        }
 
         res.render("aadhar", {
           aadharNum: aadharNum,
-          uidStatus: uidStatus,
+          uidStatus: aadharMessage,
         });
       } catch (e) {
         res.redirect("/");
+        alert("Please Provide Valid Data");
         console.log("not valid data");
       }
     });
