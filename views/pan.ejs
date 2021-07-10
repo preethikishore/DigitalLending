@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-	
-	
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#2a8637">
@@ -43,9 +41,10 @@
 
 
     <!-- CSS Stylesheets -->
-    <link href="./css/bootstrap.min.css" rel="stylesheet" type="text/css">
-    <link href="./css/mystyle.css" rel="stylesheet" type="text/css">
 
+    <link href="./css/bootstrap.min.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="./css/mystyle.css" rel="stylesheet" type="text/css">
     <!-- FONT -->
     <link href="./fonts/asap/stylesheet.css" rel="stylesheet" type="text/css">	
 
@@ -60,15 +59,15 @@
 				<div class="menu">
 	<ul>
 		<li class="d-block d-lg-none"><button class="close" id="closeBtn"></button></li>
-		<li class="active"><a href="/pan">PAN Card Verification</a></li>
-		<li class=""><a href="/aadhar">Aadhar Verification</a></li>
-		<li class=""><a href="/bank">Bank Account Verification</a></li>
+		<li class="active"><a href="/pan">PAN </a></li>
+		<li class=""><a href="/aadhar">Aadhar</a></li>
 		<li class=""><a href="#">IFSC</a></li>
+		<li class=""><a href="/bank">Bank Account </a></li>
 		<li class=""><a href="#">ITR</a></li>
 		<li class=""><a href="#">DIN</a></li>
 		<li class=""><a href="#">CIN</a></li>
 		<li class=""><a href="#">GSTIN</a></li>
-		<li class=""><a href="#">Passport Verification</a></li>
+		<li class=""><a href="#">Passport </a></li>
 		<li class=""><a href="#">CIBIL</a></li>
 
 	</ul>
@@ -89,10 +88,10 @@
 					<h1>Pan Card Verification</h1>
 					</div><!-- col -->
 
-					<form class="needs-validation"  method="POST" action="/pan" novalidate>
+					<form class="needs-validation"  method="POST" action="/pan"   novalidate>
 
 					    <div class="col mb-3">
-					      <label for="validationCustom01">PAN Number</label>
+					      <label for="validationCustom01">PAN </label>
 					      <input type="text" class="form-control" name="pan" id="validationCustom01" required>
 					      <div class="valid-feedback">
 					        Looks good!
@@ -102,7 +101,7 @@
 					      </div>
 					    </div>
 					    <div class="col">
-					  		<button id="verify" class="btn btn-submit" type="submit">Verify</button>
+					  		<button id="verify" class="btn btn-submit" type="submit" >Verify</button>
 					  	</div>
 
 					</form>
@@ -126,6 +125,13 @@
 								<td>Status</td>
 								<td>:</td>
 								<td><%= message %></td>
+								<% if (panStatus) { %>
+									
+									<td id="valid"><i class="fa fa-check" aria-hidden="true"></i></td>
+								  <% } else { %>
+									<td id="notValid"><i class="fa fa-window-close" aria-hidden="true"></i></td>
+								 <% } %>
+								
 							</tr>
 							</table>
 						</div><!-- maindata -->
@@ -146,36 +152,33 @@
 (function() {
   'use strict';
   window.addEventListener('load', function() {
-	
+	$('#dataList').hide(); 
     // Fetch all the forms we want to apply custom Bootstrap validation styles to
     var forms = document.getElementsByClassName('needs-validation');
     // Loop over them and prevent submission
     var validation = Array.prototype.filter.call(forms, function(form) {
       form.addEventListener('submit', function(event) {
-        if (form.checkValidity() === false) {
+		  let paninput = $('#validationCustom01').val();
+		  const CODE_PATTERN = /^([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1})$/;
+        if (!(form.checkValidity()) || !(CODE_PATTERN.test(paninput))) {
           event.preventDefault();
           event.stopPropagation();
 		  $('#dataList').hide(); 
         }
-        form.classList.add('was-validated');
-		$('#verify').on('click', function(){
-		$('#dataList').show();
-	});
+        form.classList.add('was-validated');		
       }, false);
     });
   }, false);
 })();
 </script>
 
-
 <script>
 $(document).ready(function(){
-
-	$('#verify').on('click', function(){
-		 $('#dataList').show().delay(10000); 		
+		$('#verify').on('click', function(){
+			$('#dataList').hide()					
 	});
-})
-</script>
+		setTimeout($('#dataList').show(),5000); 
+	})
 
 </script>
 

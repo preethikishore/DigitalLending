@@ -8,11 +8,17 @@ body{
 img{
 	max-width: 100%;
 }
+#valid i{
+	color: #01937C;
+}
+#notValid i{
+	color: #BB371A;
+}
 
-#dataList
+/* #dataList
 {
 	display: none;
-}
+} */
 
 .wrapper{
 	background-color: #f7f7f7;
