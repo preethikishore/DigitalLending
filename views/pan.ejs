@@ -62,14 +62,11 @@
 		<li class="active"><a href="/pan">PAN </a></li>
 		<li class=""><a href="/aadhar">Aadhar</a></li>
 		<li class=""><a href="#">IFSC</a></li>
-		<li class=""><a href="#">Bank Account </a></li>
-		<li class=""><a href="#">Income Tax-ITR</a></li>
-		<li class=""><a href="#">Income Form 16</a></li>
+		<li class=""><a href="/bank">Bank Account </a></li>
+		<li class=""><a href="#">ITR</a></li>
 		<li class=""><a href="#">DIN</a></li>
 		<li class=""><a href="#">CIN</a></li>
 		<li class=""><a href="#">GSTIN</a></li>
-		<li class=""><a href="#">Aadhar Signature</a></li>
-		<li class=""><a href="#">Video KYC</a></li>
 		<li class=""><a href="#">Passport </a></li>
 		<li class=""><a href="#">CIBIL</a></li>
 
@@ -91,7 +88,7 @@
 					<h1>Pan Card Verification</h1>
 					</div><!-- col -->
 
-					<form class="needs-validation"  method="POST" action="/pan"   novalidate>
+					<form class="needs-validation"  method="POST" action="\pan" novalidate>
 
 					    <div class="col mb-3">
 					      <label for="validationCustom01">PAN </label>
@@ -104,7 +101,7 @@
 					      </div>
 					    </div>
 					    <div class="col">
-					  		<button id="verify" class="btn btn-submit" type="submit" >Verify</button>
+					  		<button id="verify" class="btn btn-submit" type="button" >Verify</button>
 					  	</div>
 
 					</form>
@@ -117,23 +114,24 @@
 							<tr>
 								<td>PAN </td>
 								<td>:</td>
-								<td><%= panNum %></td>
+								<td  id="panno"><%= panNum %></td>
 							</tr>
 							<tr>
 								<th>Name</th>
 								<th>:</th>
-								<th><%= personName %></th>
+								<th  id="name"><%= personName %></th>
 							</tr>
 							<tr>
 								<td>Status</td>
 								<td>:</td>
-								<td><%= message %></td>
-								<% if (panStatus) { %>
+								<td  id="status"><%= message %></td>
+								<td id="flag"><i id="faflag" aria-hidden="true"></i></td>
+								<!-- <% if (panStatus) { %>
 									
 									<td id="valid"><i class="fa fa-check" aria-hidden="true"></i></td>
 								  <% } else { %>
 									<td id="notValid"><i class="fa fa-window-close" aria-hidden="true"></i></td>
-								 <% } %>
+								 <% } %> -->
 								
 							</tr>
 							</table>
@@ -161,9 +159,7 @@
     // Loop over them and prevent submission
     var validation = Array.prototype.filter.call(forms, function(form) {
       form.addEventListener('submit', function(event) {
-		  let paninput = $('#validationCustom01').val();
-		  const CODE_PATTERN = /^([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1})$/;
-        if (!(form.checkValidity()) || !(CODE_PATTERN.test(paninput))) {
+        if (!(form.checkValidity())) {
           event.preventDefault();
           event.stopPropagation();
 		  $('#dataList').hide(); 
@@ -178,12 +174,65 @@
 <script>
 $(document).ready(function(){
 		$('#verify').on('click', function(){
-			$('#dataList').hide()					
+			var number = $('#validationCustom01').val();
+		  const CODE_PATTERN = /^([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1})$/;
+			console.log(number);
+			if ((CODE_PATTERN.test(number)))
+			{
+			var settings = {
+  "url": "https://sandbox.aadhaarkyc.io/api/v1/pan/pan",
+  "method": "POST",
+  "timeout": 0,
+  "headers": {
+    "Content-Type": "application/json",
+	"Authorization":
+      "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTYyNTc0NTMwNiwianRpIjoiNGE4ZmYxN2EtYzEwMy00Y2VjLWI1OGItOGZkMDUxNzQyZjdlIiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LnNydmluZm90ZWNoQGFhZGhhYXJhcGkuaW8iLCJuYmYiOjE2MjU3NDUzMDYsImV4cCI6MTYyODMzNzMwNiwidXNlcl9jbGFpbXMiOnsic2NvcGVzIjpbInJlYWQiXX19.DYdv0yltgiZ3hOvMZ1rxDMT62LWwH4TBgdvLyP3CUus",
+    "Accept": "application/json"
+  },
+  "data": JSON.stringify({
+    "id_number": number
+  }),
+};
+console.log(settings);
+
+$.ajax(settings).done(function (response) {
+  console.log(response);
+  let panStatus = response.success;
+        let statusMsg;
+        
+        let panNum= response.data.pan_number;
+        let  personName= response.data.full_name;
+          $('#panno').text(panNum);
+		  $('#name').text(personName);
+		  if (panStatus) {
+          statusMsg = "Verified Successfully";
+		  $('#status').text(statusMsg);
+		  $('#faflag').removeClass("fa fa-window-close");
+		  $('#faflag').addClass("fa fa-check");
+        } else {
+          statusMsg = "Failed, Check PAN #";
+		  $('#status').text(statusMsg);
+		  $('#faflag').removeClass("fa fa-check");
+		  $('#faflag').addClass("fa fa-window-close");
+        }
+		  
+});
+$('#dataList').hide(2000)
+setTimeout($('#dataList').show(1000),8000); 			
+			}
+			else
+			{
+				$('#panno').text(number);
+		  $('#name').text("Invalid PAN");
+		  statusMsg = "Failed, Check PAN #";
+		  $('#status').text(statusMsg);
+		  $('#faflag').addClass("fa fa-window-close");
+			}		
 	});
-		setTimeout($('#dataList').show(),5000); 
+
+	$('#dataList').hide()
 	})
 
 </script>
-
 </body>
 </html>
