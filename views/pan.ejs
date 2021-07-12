@@ -88,7 +88,7 @@
 					<h1>Pan Card Verification</h1>
 					</div><!-- col -->
 
-					<form class="was-validated"  method="POST" action="\pan" novalidate>
+					<form class="needs-validation"  method="POST" action="\pan" novalidate>
                              <!-- class="was-validated" needs-validation -->
 					    <div class="col mb-3">
 					      <label for="validationCustom01">PAN </label>
@@ -150,7 +150,7 @@
     var forms = document.getElementsByClassName('needs-validation');
     // Loop over them and prevent submission
     var validation = Array.prototype.filter.call(forms, function(form) {
-      form.addEventListener('submit', function(event) {
+      form.addEventListener('click', function(event) {
         if (!(form.checkValidity())) {
           event.preventDefault();
           event.stopPropagation();
