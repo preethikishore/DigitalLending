@@ -24,6 +24,8 @@
 
     <!-- CSS Stylesheets -->
     <link href="./css/bootstrap.min.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
     <link href="./css/mystyle.css" rel="stylesheet" type="text/css">
 
     <!-- FONT -->
@@ -42,16 +44,16 @@
 						<div class="menu">
 							<ul>
 								<li class="d-block d-lg-none"><button class="close" id="closeBtn"></button></li>
-								<li class="active"><a href="/pan">PAN </a></li>
-								<li class=""><a href="/aadhar">Aadhar</a></li>
-								<li class=""><a href="#">IFSC</a></li>
+								<li class=""><a href="/pan">PAN </a></li>
+								<li class="active"><a href="/aadhar">Aadhaar</a></li>
+								<li class=""><a href="/ifsc">IFSC</a></li>
 								<li class=""><a href="#">Bank Account </a></li>
 								<li class=""><a href="#">Income Tax-ITR</a></li>
 								<li class=""><a href="#">Income Form 16</a></li>
 								<li class=""><a href="#">DIN</a></li>
 								<li class=""><a href="#">CIN</a></li>
 								<li class=""><a href="#">GSTIN</a></li>
-								<li class=""><a href="#">Aadhar Signature</a></li>
+								<li class=""><a href="#">Aadhaar Signature</a></li>
 								<li class=""><a href="#">Video KYC</a></li>
 								<li class=""><a href="#">Passport </a></li>
 								<li class=""><a href="#">CIBIL</a></li>
@@ -76,20 +78,20 @@
 					<h1>AADHAR Verification</h1>
 					</div><!-- col -->
 
-					<form class="needs-validation"  method="POST" action="/aadhar" novalidate>
+					<form class="needs-validation"  method="POST" action="\aadhar" novalidate>
 
 					    <div class="col mb-3">
 					      <label for="validationCustom01">AADHAR Number</label>
-					      <input type="number" name="aadhar" class="form-control" value="12345678901234" id="validationCustom01" required>
+					      <input type="number" pattern="[0-9]{12}" name="aadhar" class="form-control" value="12345678901234" id="validationCustom01" required>
 					      <div class="valid-feedback">
 					        Looks good!
 					      </div>
 					      <div class="invalid-feedback">
-					        Please enter AADHAR Number.
+					        Please Enter AADHAR Number.
 					      </div>
 					    </div>
 					    <div class="col">
-					  		<button id="verify" class="btn btn-submit" type="submit">Verify</button>
+					  		<button id="verify" class="btn btn-submit" type="button">Verify</button>
 					  	</div>
 
 					</form>
@@ -100,14 +102,15 @@
 						<div class="maindata">
 							<table class="table table-hover">
 							<tr>
-								<td>AADHAR Number</td>
+								<td>AADHAR #</td>
 								<td>:</td>
-								<td><%= aadharNum %></td>
+								<td id="uidno"><%= aadharNum %></td>
 							</tr>
 							<tr>
 								<td>Status</td>
 								<td>:</td>
-								<td><%= uidStatus %></td>
+								<td id="status"><%= uidStatus %></td>
+								<td id="flag"><i id="faflag" aria-hidden="true"></i></td>
 							</tr>
 							</table>
 						</div><!-- maindata -->
@@ -124,45 +127,93 @@
     <script src="./js/bootstrap.bundle.min.js"></script>
     <script src="./js/main.js"></script>
 
-<script>
-// Example starter JavaScript for disabling form submissions if there are invalid fields
-(function() {
-  'use strict';
-  window.addEventListener('load', function() {
-    // Fetch all the forms we want to apply custom Bootstrap validation styles to
-    var forms = document.getElementsByClassName('needs-validation');
-    // Loop over them and prevent submission
-    var validation = Array.prototype.filter.call(forms, function(form) {
-      form.addEventListener('submit', function(event) {
-        if (form.checkValidity() === false) {
-          event.preventDefault();
-          event.stopPropagation();
-		//   $('#dataList').hide(); 
-        }
-        form.classList.add('was-validated');
-		$('#verify').on('click', function(){
-		$('#dataList').show();
-	});
+	<script>
+		// Example starter JavaScript for disabling form submissions if there are invalid fields
+		(function() {
+		  'use strict';
+		  window.addEventListener('load', function() {
+			$('#dataList').hide(); 
+			// Fetch all the forms we want to apply custom Bootstrap validation styles to
+			var forms = document.getElementsByClassName('needs-validation');
+			// Loop over them and prevent submission
+			var validation = Array.prototype.filter.call(forms, function(form) {
+			  form.addEventListener('click', function(event) {
+				if (!(form.checkValidity())) {
+				  event.preventDefault();
+				  event.stopPropagation();
+				  $('#dataList').hide(); 
+				}
+				form.classList.add('was-validated');		
+			  }, false);
+			});
+		  }, false);
+		})();
+		</script>
 		
-      }, false);
-    });
-  }, false);
-})();
-</script>
-
-
-<script>
-
-	$(document).ready(function(){
-		$('#verify').on('click', function(){
-		$('#dataList').show();	
-		setTimeout(() => {  $('#dataList').show(); }, 5000);	
-	});
-	setTimeout(() => {  $('#dataList').hide(); }, 5000);
+		<script>
+		$(document).ready(function(){			
+				$('#verify').on('click', function(){
+					$('#dataList').hide(); 
+					var number = $('#validationCustom01').val();
+					$('#uidno').text(number);
+				  statusMsg = "Loading..";
+				  $('#status').text(statusMsg);
+				  $('#faflag').removeClass();			
+				  const CODE_PATTERN = /^([0-9]{12})$/;
+					console.log(number);
+					if ((CODE_PATTERN.test(number)))
+					{			
+					var settings = {
+					 "url": "https://sandbox.aadhaarkyc.io/api/v1/aadhaar-validation/aadhaar-validation",
+					  "method": "POST",
+					  "timeout": 0,
+					   "headers": {
+						   "Content-Type": "application/json",
+						   "Authorization":
+						   "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTYyNTc0NTMwNiwianRpIjoiNGE4ZmYxN2EtYzEwMy00Y2VjLWI1OGItOGZkMDUxNzQyZjdlIiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LnNydmluZm90ZWNoQGFhZGhhYXJhcGkuaW8iLCJuYmYiOjE2MjU3NDUzMDYsImV4cCI6MTYyODMzNzMwNiwidXNlcl9jbGFpbXMiOnsic2NvcGVzIjpbInJlYWQiXX19.DYdv0yltgiZ3hOvMZ1rxDMT62LWwH4TBgdvLyP3CUus",
+						   "Accept": "application/json"
+						   },
+					  "data": JSON.stringify({
+					  "id_number": number
+				}),
+		};
+		console.log(settings);
 		
-		// setTimeout(() => {  $('#dataList').hide(); }, 2000);
-	})
-</script>
+		$.ajax(settings).always(function (response) {
+		  console.log(response);
+		  let uidStatus = response.success;
+		  console.log(uidStatus);
+				let statusMsg;
+				let uidNum;
+				  
+					 if (uidStatus) {						 
+					uidNum= response.data.aadhaar_number;				
+					$('#uidno').text(uidNum);
+					 statusMsg = "Verified Successfully";
+					 $('#status').text(statusMsg);
+					 $('#faflag').removeClass("fa fa-window-close");
+					 $('#faflag').addClass("fa fa-check");
+					}
+				   else {
+					$('#uidno').text(number);
+				  statusMsg = "Failed, Check AADHAAR #";
+				  $('#status').text(statusMsg);
+				  $('#faflag').removeClass("fa fa-check");
+				  $('#faflag').addClass("fa fa-window-close");
+				}	 
+		 });			
+					}
+					else
+					{
+				  $('#uidno').text(number);
+				  statusMsg = "Failed, Check AADHAAR #";
+				  $('#status').text(statusMsg);
+				  $('#faflag').addClass("fa fa-window-close");
+					}
+					$('#dataList').show();
+			});
+			});
+	</script>
 
 </body>
 </html>
