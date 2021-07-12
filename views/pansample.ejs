@@ -83,21 +83,21 @@
 					
 					<div class="col">
 					<div class="formicon">
-						<img src="./img/card.svg" alt>
+						<img src="./img/bank.svg" alt>
 					</div><!-- formicon -->
 					<h1>Pan Card Verification</h1>
 					</div><!-- col -->
 
-					<form class="was-validated"  method="POST" action="\pan" novalidate>
-                             <!-- class="was-validated" needs-validation -->
-					    <div class="col mb-3">
+					<form class="needs-validation"  method="POST" action="\pan" novalidate>
+
+					    <div class="col mb-3 ">
 					      <label for="validationCustom01">PAN </label>
-					      <input type="text" class="form-control" pattern="[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}" name="pan" id="validationCustom01" required>
-					      <div class="valid-feedback ">
-					        Looks Good!
+					      <input type="text" class="form-control" name="pan" id="validationCustom01" required>
+					      <div class="valid-feedback d-block">
+					        Looks good!
 					      </div>
-					      <div class="invalid-feedback ">
-					        Please Enter PAN Card Number.
+					      <div class="invalid-feedback d-block">
+					        Please enter PAN Card Number.
 					      </div>
 					    </div>
 					    <div class="col">
@@ -125,7 +125,14 @@
 								<td>Status</td>
 								<td>:</td>
 								<td  id="status"><%= message %></td>
-								<td id="flag"><i id="faflag" aria-hidden="true"></i></td>								
+								<td id="flag"><i id="faflag" aria-hidden="true"></i></td>
+								<!-- <% if (panStatus) { %>
+									
+									<td id="valid"><i class="fa fa-check" aria-hidden="true"></i></td>
+								  <% } else { %>
+									<td id="notValid"><i class="fa fa-window-close" aria-hidden="true"></i></td>
+								 <% } %> -->
+								
 							</tr>
 							</table>
 						</div><!-- maindata -->
@@ -165,8 +172,6 @@
 
 <script>
 $(document).ready(function(){
-	
-	
 		$('#verify').on('click', function(){
 			$body = $("body");
 			$('#dataList').hide(); 
@@ -181,52 +186,45 @@ $(document).ready(function(){
 			if ((CODE_PATTERN.test(number)))
 			{			
 			var settings = {
-             "url": "https://sandbox.aadhaarkyc.io/api/v1/pan/pan",
-              "method": "POST",
-              "timeout": 0,
-               "headers": {
-                   "Content-Type": "application/json",
-	               "Authorization":
-                   "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTYyNTc0NTMwNiwianRpIjoiNGE4ZmYxN2EtYzEwMy00Y2VjLWI1OGItOGZkMDUxNzQyZjdlIiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LnNydmluZm90ZWNoQGFhZGhhYXJhcGkuaW8iLCJuYmYiOjE2MjU3NDUzMDYsImV4cCI6MTYyODMzNzMwNiwidXNlcl9jbGFpbXMiOnsic2NvcGVzIjpbInJlYWQiXX19.DYdv0yltgiZ3hOvMZ1rxDMT62LWwH4TBgdvLyP3CUus",
-                   "Accept": "application/json"
-                   },
-              "data": JSON.stringify({
-              "id_number": number
-        }),
+  "url": "https://sandbox.aadhaarkyc.io/api/v1/pan/pan",
+  "method": "POST",
+  "timeout": 0,
+  "headers": {
+    "Content-Type": "application/json",
+	"Authorization":
+      "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTYyNTc0NTMwNiwianRpIjoiNGE4ZmYxN2EtYzEwMy00Y2VjLWI1OGItOGZkMDUxNzQyZjdlIiwidHlwZSI6ImFjY2VzcyIsImlkZW50aXR5IjoiZGV2LnNydmluZm90ZWNoQGFhZGhhYXJhcGkuaW8iLCJuYmYiOjE2MjU3NDUzMDYsImV4cCI6MTYyODMzNzMwNiwidXNlcl9jbGFpbXMiOnsic2NvcGVzIjpbInJlYWQiXX19.DYdv0yltgiZ3hOvMZ1rxDMT62LWwH4TBgdvLyP3CUus",
+    "Accept": "application/json"
+  },
+  "data": JSON.stringify({
+    "id_number": number
+  }),
 };
 console.log(settings);
 
-$.ajax(settings).always(function (response) {
+$.ajax(settings).done(function (response) {
   console.log(response);
   let panStatus = response.success;
-  console.log(panStatus);
         let statusMsg;
-        let panNum;
-		let  personName;
-		  
-		     if (panStatus) {
-             statusMsg = "Verified Successfully";
-		     $('#status').text(statusMsg);
-		     $('#faflag').removeClass("fa fa-window-close");
-		     $('#faflag').addClass("fa fa-check");
-			  panNum= response.data.pan_number;
-        	  personName= response.data.full_name;
-		
+        let panNum= response.data.pan_number;
+        let  personName= response.data.full_name;
           $('#panno').text(panNum);
 		  $('#name').text(personName);
-            }
-	       else {
+		  if (panStatus) {
+          statusMsg = "Verified Successfully";
+		  $('#status').text(statusMsg);
+		  $('#faflag').removeClass("fa fa-window-close");
+		  $('#faflag').addClass("fa fa-check");
+        } else {
           statusMsg = "Failed, Check PAN #";
-		  $('#name').text("Invalid PAN");
 		  $('#status').text(statusMsg);
 		  $('#faflag').removeClass("fa fa-check");
 		  $('#faflag').addClass("fa fa-window-close");
         }	 
- });			
+});			
 			}
 			else
 			{
-		  $('#panno').text(number);
+				$('#panno').text(number);
 		  $('#name').text("Invalid PAN");
 		  statusMsg = "Failed, Check PAN #";
 		  $('#status').text(statusMsg);

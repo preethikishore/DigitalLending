@@ -32,6 +32,16 @@ img{
     padding: 0 1rem;
 }
 
+.fa-window-close
+{
+	color: #BB371A;
+}
+
+.fa-check
+{
+	color: #01937C;
+}
+
 .main{
 	display: flex;
 	flex-flow: wrap;
