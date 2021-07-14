@@ -40,6 +40,9 @@ app.get("/aadhar", function (_req, res) {
 app.get("/cin", function (_req, res) {
   res.render("cin");
 });
+app.get("/din", function (_req, res) {
+  res.render("din");
+});
 
 app.get("/ifsc", function (_req, res) {
   res.render("ifsc", {

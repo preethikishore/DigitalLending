@@ -1,7 +1,7 @@
 <%- include("header") -%>
 
     <!-- OG Tags Start -->  
-    <meta property="og:title" content="CIN Verification">
+    <meta property="og:title" content="PAN Card Verification">
     <meta property="og:url" content="">
     <meta property="og:description" content="">
     <meta property="og:type" content="">
@@ -14,7 +14,7 @@
     <meta property="og:email" content="">
     <meta property="og:phone_number" content="">
 
-    <title>CIN Verification</title>
+    <title>DIN Verification</title>
     
     <link rel="icon" href="./img/favicon.svg" sizes="32x32" type="image/png"> 
 
@@ -42,10 +42,10 @@
 		<li class=""><a href="/aadhar">Aadhaar</a></li>
 		<li class=""><a href="/ifsc">IFSC</a></li>
 		<li class=""><a href="/bank">Bank Account </a></li>
-        <li class="active"><a href="/cin">CIN</a></li>
-		<li class=""><a href="/din">DIN</a></li>
+		<li class=""><a href="/cin">CIN</a></li>
+		<li class="active"><a href="/din">DIN</a></li>
 		<li class=""><a href="#">Income Tax-ITR</a></li>
-		<li class=""><a href="#">Income Form 16</a></li> 
+		<li class=""><a href="#">Income Form 16</a></li>  
 		<li class=""><a href="#">GSTIN</a></li>
 		<li class=""><a href="#">Aadhaar Signature</a></li>
 		<li class=""><a href="#">Video KYC</a></li>
@@ -66,19 +66,19 @@
 					<div class="formicon">
 						<img src="./img/card.svg" alt>
 					</div><!-- formicon -->
-					<h1>CIN Verification</h1>
+					<h1>DIN Verification</h1>
 					</div><!-- col -->
 
-					<form class="needs-validation"  method="POST" action="\cin" novalidate>
+					<form class="needs-validation"  method="POST" action="\din" novalidate>
                              <!-- class="was-validated" needs-validation -->
 					    <div class="col mb-3">
-					      <label for="validationCustom01">CIN </label>
-					      <input type="text" class="form-control"  pattern="[luLU]{1}[0-9]{5}[a-zA-Z]{2}[0-9]{4}[a-zA-Z]{3}[0-9]{6}" id="validationCustom01" required>
+					      <label for="validationCustom01">DIN </label>
+					      <input type="text" class="form-control" pattern="[0-9]{8}"  id="validationCustom01" required>
 					      <div class="valid-feedback ">
 					        Looks Good!
 					      </div>
 					      <div class="invalid-feedback ">
-					        Please Enter CIN .
+					        Please Enter DIN .
 					      </div>
 					    </div>
 					    <div class="col">
@@ -93,34 +93,23 @@
 						<div class="maindata">
 							<table class="table table-hover">
 							<tr>
-								<td>Company Id </td>
+								<td>DIN </td>
 								<td>:</td>
-								<td  id="cin"></td>
+								<td  id="din"></td>
                                 <td id="flag"><i id="faflag" aria-hidden="true"></i></td>
 							</tr>
 							<tr>
-								<th>Company</th>
+								<th>Name</th>
 								<th>:</th>
 								<th  id="cname"></th>
 							</tr>
 							<tr>
-								<td>Type</td>
+								<td>Nationality</td>
 								<td>:</td>
-								<td  id="type"></td>
+								<td  id="nation"></td>
 																
 							</tr>
-                            <tr>
-								<td>Reg.No</td>
-								<td>:</td>
-								<td  id="regnum"></td>
-																
-							</tr>
-                            <tr>
-								<td>Category</td>
-								<td>:</td>
-								<td  id="class"></td>
-																
-							</tr>
+    
                             <tr>
 								<td>Status</td>
 								<td>:</td>
@@ -181,22 +170,20 @@ $(document).ready(function(){
 		$('#verify').on('click', function(){
 			$('#dataList').hide(); 
 			var number = $('#validationCustom01').val();
-			$('#cin').text(number);
+			$('#din').text(number);
 		  $('#cname').text("Loading..");
           statusMsg = "Loading..";
-		  $('#type').text("Loading..");
-          $('#regnum').text("Loading..");
-          $('#class').text("Loading..");
+		  $('#nation').text("Loading..");   
           $('#message').text("Loading..");
 
 
 		  $('#faflag').removeClass();			
-		  const CODE_PATTERN = /^([luLU]{1}[0-9]{5}[a-zA-Z]{2}[0-9]{4}[a-zA-Z]{3}[0-9]{6})$/;
+		  const CODE_PATTERN = /^([0-9]{8})$/;
 			console.log(number);
 			if ((CODE_PATTERN.test(number)))
 			{			
 			var settings = {
-             "url": "https://sandbox.aadhaarkyc.io/api/v1/corporate/company-details",
+             "url": "https://sandbox.aadhaarkyc.io//api/v1/corporate/din",
               "method": "POST",
               "timeout": 0,
                "headers": {
@@ -217,25 +204,20 @@ $.ajax(settings).always(function (response) {
         let statusMsg;
 	    if (statusCode) {
         statusMsg = "Verified Successfully";
-        $('#cin').text(number);
-		$('#cname').text(response.data.company_name);
-		$('#type').text(response.data.company_type);
-        $('#regnum').text(response.data.details.company_info.registration_number);
-        $('#class').text(response.data.details.company_info.class_of_company);
+        $('#din').text(number);
+		$('#cname').text(response.data.full_name);
+		$('#nation').text(response.data.nationality);
         $('#message').text(statusMsg);
 		$('#faflag').removeClass("fa fa-window-close");
 		$('#faflag').addClass("fa fa-check");
             }
 	       else {
 		
-          statusMsg = "Failed, Check CIN #";
-          $('#cin').text(number);
-		  $('#cname').text("INVALID CIN #");
-		  $('#type').text("INVALID CIN #");
-          $('#regnum').text("INVALID CIN #");
-          $('#class').text("INVALID CIN #");
+          statusMsg = "Failed, Check DIN #";
+          $('#din').text(number);
+		  $('#cname').text("INVALID DIN #");
+		  $('#nation').text("INVALID DIN #");  
           $('#message').text(statusMsg );
-
 		  $('#faflag').removeClass("fa fa-check");
 		  $('#faflag').addClass("fa fa-window-close");
         }	 
@@ -243,12 +225,10 @@ $.ajax(settings).always(function (response) {
 			}
 			else
 			{
-         statusMsg = "Failed, Check CIN #";
-          $('#cin').text(number);
-		  $('#cname').text("INVALID CIN #");
-		  $('#type').text("INVALID CIN #");
-          $('#regnum').text("INVALID CIN #");
-          $('#class').text("INVALID CIN #");
+		  statusMsg = "Failed, Check DIN #";
+          $('#din').text(number);
+		  $('#cname').text("INVALID DIN #");
+		  $('#nation').text("INVALID DIN #");  
           $('#message').text(statusMsg );
 		  $('#faflag').addClass("fa fa-window-close");
 			}
