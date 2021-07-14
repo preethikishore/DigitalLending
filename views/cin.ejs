@@ -14,7 +14,7 @@
     <meta property="og:email" content="">
     <meta property="og:phone_number" content="">
 
-    <title>PAN Card Verification</title>
+    <title>CIN Verification</title>
     
     <link rel="icon" href="./img/favicon.svg" sizes="32x32" type="image/png"> 
 
@@ -66,19 +66,19 @@
 					<div class="formicon">
 						<img src="./img/card.svg" alt>
 					</div><!-- formicon -->
-					<h1>Pan Card Verification</h1>
+					<h1>CIN Verification</h1>
 					</div><!-- col -->
 
-					<form class="needs-validation"  method="POST" action="\pan" novalidate>
+					<form class="needs-validation"  method="POST" action="\cin" novalidate>
                              <!-- class="was-validated" needs-validation -->
 					    <div class="col mb-3">
-					      <label for="validationCustom01">PAN </label>
-					      <input type="text" class="form-control" pattern="[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}" name="pan" id="validationCustom01" required>
+					      <label for="validationCustom01">CIN </label>
+					      <input type="text" class="form-control"  pattern="[luLU]{1}[0-9]{5}[a-zA-Z]{2}[0-9]{4}[a-zA-Z]{3}[0-9]{6}" id="validationCustom01" required>
 					      <div class="valid-feedback ">
 					        Looks Good!
 					      </div>
 					      <div class="invalid-feedback ">
-					        Please Enter PAN Card Number.
+					        Please Enter CIN .
 					      </div>
 					    </div>
 					    <div class="col">
@@ -93,21 +93,41 @@
 						<div class="maindata">
 							<table class="table table-hover">
 							<tr>
-								<td>PAN </td>
+								<td>Company Id </td>
 								<td>:</td>
-								<td  id="panno"><%= panNum %></td>
+								<td  id="cin"></td>
+                                <td id="flag"><i id="faflag" aria-hidden="true"></i></td>
 							</tr>
 							<tr>
-								<th>Name</th>
+								<th>Company</th>
 								<th>:</th>
-								<th  id="name"><%= personName %></th>
+								<th  id="cname"></th>
 							</tr>
 							<tr>
-								<td>Status</td>
+								<td>Type</td>
 								<td>:</td>
-								<td  id="status"><%= message %></td>
-								<td id="flag"><i id="faflag" aria-hidden="true"></i></td>								
+								<td  id="type"></td>
+																
 							</tr>
+                            <tr>
+								<td>Reg.No</td>
+								<td>:</td>
+								<td  id="regnum"></td>
+																
+							</tr>
+                            <tr>
+								<td>Category</td>
+								<td>:</td>
+								<td  id="class"></td>
+																
+							</tr>
+                            <tr>
+								<td>Message</td>
+								<td>:</td>
+								<td  id="message"></td>
+																
+							</tr>
+                            
 							</table>
 						</div><!-- maindata -->
 					</div><!-- row -->
@@ -161,17 +181,22 @@ $(document).ready(function(){
 		$('#verify').on('click', function(){
 			$('#dataList').hide(); 
 			var number = $('#validationCustom01').val();
-			$('#panno').text(number);
-		  $('#name').text("Loading..");
+			$('#cin').text(number);
+		  $('#cname').text("Loading..");
           statusMsg = "Loading..";
-		  $('#status').text(statusMsg);
+		  $('#type').text("Loading..");
+          $('#regnum').text("Loading..");
+          $('#class').text("Loading..");
+          $('#message').text("Loading..");
+
+
 		  $('#faflag').removeClass();			
-		  const CODE_PATTERN = /^([a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1})$/;
+		  const CODE_PATTERN = /^([luLU]{1}[0-9]{5}[a-zA-Z]{2}[0-9]{4}[a-zA-Z]{3}[0-9]{6})$/;
 			console.log(number);
 			if ((CODE_PATTERN.test(number)))
 			{			
 			var settings = {
-             "url": "https://sandbox.aadhaarkyc.io/api/v1/pan/pan",
+             "url": "https://sandbox.aadhaarkyc.io/api/v1/corporate/company-details",
               "method": "POST",
               "timeout": 0,
                "headers": {
@@ -188,28 +213,29 @@ console.log(settings);
 
 $.ajax(settings).always(function (response) {
   console.log(response);
-  let panStatus = response.success;
-  console.log(panStatus);
+  let statusCode = response.success;
         let statusMsg;
-        let panNum;
-		let  personName;
-		  
-		     if (panStatus) {
-             statusMsg = "Verified Successfully";
-		     $('#status').text(statusMsg);
-		     $('#faflag').removeClass("fa fa-window-close");
-		     $('#faflag').addClass("fa fa-check");
-			  panNum= response.data.pan_number;
-        	  personName= response.data.full_name;
-		
-          $('#panno').text(panNum);
-		  $('#name').text(personName);
+	    if (statusCode) {
+        statusMsg = "Verified Successfully";
+        $('#cin').text(number);
+		$('#cname').text(response.data.company_name);
+		$('#type').text(response.data.company_type);
+        $('#regnum').text(response.data.details.company_info.registration_number);
+        $('#class').text(response.data.details.company_info.class_of_company);
+        $('#message').text(statusMsg);
+		$('#faflag').removeClass("fa fa-window-close");
+		$('#faflag').addClass("fa fa-check");
             }
 	       else {
-			$('#panno').text(number);
-          statusMsg = "Failed, Check PAN #";
-		  $('#name').text("Invalid PAN");
-		  $('#status').text(statusMsg);
+		
+          statusMsg = "Failed, Check CIN #";
+          $('#cin').text(number);
+		  $('#cname').text("INVALID CIN #");
+		  $('#type').text("INVALID CIN #");
+          $('#regnum').text("INVALID CIN #");
+          $('#class').text("INVALID CIN #");
+          $('#message').text(statusMsg );
+
 		  $('#faflag').removeClass("fa fa-check");
 		  $('#faflag').addClass("fa fa-window-close");
         }	 
@@ -217,10 +243,13 @@ $.ajax(settings).always(function (response) {
 			}
 			else
 			{
-		  $('#panno').text(number);
-		  $('#name').text("Invalid PAN");
-		  statusMsg = "Failed, Check PAN #";
-		  $('#status').text(statusMsg);
+         statusMsg = "Failed, Check CIN #";
+          $('#cin').text(number);
+		  $('#cname').text("INVALID CIN #");
+		  $('#type').text("INVALID CIN #");
+          $('#regnum').text("INVALID CIN #");
+          $('#class').text("INVALID CIN #");
+          $('#message').text(statusMsg );
 		  $('#faflag').addClass("fa fa-window-close");
 			}
 			$('#dataList').show();
